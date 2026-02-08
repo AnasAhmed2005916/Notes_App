@@ -88,108 +88,109 @@ class _HomePageState extends State<HomePage> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : data.isEmpty
-              ? Center(
-                  child: Text(
-                    'No Items Added!',
-                    style: TextStyle(fontSize: 20, color: Colors.grey[700]),
-                  ),
-                )
-              : Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.orange[50]!, Colors.white],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                  ),
-                  child: GridView.builder(
-                    itemCount: data.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 15,
-                      crossAxisSpacing: 15,
-                      mainAxisExtent: 180,
-                    ),
-                    itemBuilder: (context, index) {
-                      final category = data[index];
-                      return InkWell(
-                        onLongPress: () {
-                          AwesomeDialog(
-                            context: context,
-                            dialogType: DialogType.warning,
-                            animType: AnimType.rightSlide,
-                            title: 'Action',
-                            desc: 'Select what you want to do',
-                            btnCancelText: 'Remove',
-                            btnOkText: 'Update',
-                            btnOkOnPress: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      editCategory(docid: category.id),
-                                ),
-                              );
-                            },
-                            btnCancelOnPress: () async {
-                              await FirebaseFirestore.instance
-                                  .collection('categories')
-                                  .doc(category.id)
-                                  .delete();
-                              data.removeAt(index);
-                              setState(() {});
-                            },
-                          ).show();
-                        },
-                        onTap: () {
-                          Navigator.push(
+          ? Center(
+              child: Text(
+                'No Items Added!',
+                style: TextStyle(fontSize: 20, color: Colors.grey[700]),
+              ),
+            )
+          : Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.orange[50]!, Colors.white],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+              child: GridView.builder(
+                itemCount: data.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 15,
+                  crossAxisSpacing: 15,
+                  mainAxisExtent: 180,
+                ),
+                itemBuilder: (context, index) {
+                  final category = data[index];
+                  return InkWell(
+                    onLongPress: () {
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.warning,
+                        animType: AnimType.rightSlide,
+                        title: 'Action',
+                        desc: 'Select what you want to do',
+                        btnCancelText: 'Remove',
+                        btnOkText: 'Update',
+                        btnOkOnPress: () {
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => BlocProvider(
-                                create: (context) =>
-                                    NoteCubit()..getNotes(category.id),
-                                child: NotePage(
-                                  categoryName: category['name'],
-                                  categoryId: category.id,
-                                ),
-                              ),
+                              builder: (context) =>
+                                  editCategory(docid: category.id),
                             ),
                           );
                         },
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          elevation: 5,
-                          shadowColor: Colors.orange[100],
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: AssetImage(Assets.folderImage),
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                category['name'],
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
+                        btnCancelOnPress: () async {
+                          await FirebaseFirestore.instance
+                              .collection('categories')
+                              .doc(category.id)
+                              .delete();
+                          data.removeAt(index);
+                          setState(() {});
+                        },
+                      ).show();
+                    },
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BlocProvider(
+                            create: (context) =>
+                                NoteCubit()..getNotes(category.id),
+                            child: NotePage(
+                              categoryName: category['name'],
+                              categoryId: category.id,
+                            ),
                           ),
                         ),
                       );
                     },
-                  ),
-                ),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      elevation: 5,
+                      shadowColor: Colors.orange[100],
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 100,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(Assets.folderImage),
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            category['name'],
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
     );
   }
 }
