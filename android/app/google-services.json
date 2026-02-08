@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "643961249310",
+    "project_id": "notesapp-f9472",
+    "storage_bucket": "notesapp-f9472.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:643961249310:android:a10e4a016ec000e284580f",
+        "android_client_info": {
+          "package_name": "com.example.firebase_course"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "643961249310-tfilro7u3imrrsj8cu71vj2qsm8dvdoe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWQcfyhqxYpFGGjJR3ik90iCNzJE4TySY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "643961249310-tfilro7u3imrrsj8cu71vj2qsm8dvdoe.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "643961249310-p81bedo0sefd64ef2qmo1h1mhtg7cppg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.firebaseCourse1"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:643961249310:android:7951d3600f9318c184580f",
+        "android_client_info": {
+          "package_name": "com.example.firebase_course1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "643961249310-tfilro7u3imrrsj8cu71vj2qsm8dvdoe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWQcfyhqxYpFGGjJR3ik90iCNzJE4TySY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "643961249310-tfilro7u3imrrsj8cu71vj2qsm8dvdoe.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "643961249310-p81bedo0sefd64ef2qmo1h1mhtg7cppg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.firebaseCourse1"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
