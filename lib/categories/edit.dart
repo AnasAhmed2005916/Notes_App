@@ -1,76 +1,59 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_course1/core/widgets/customaddtextfield.dart';
-import 'package:firebase_course1/home_page.dart';
+import 'package:firebase_course1/features/home/views/cubit/home_cubit.dart';
+import 'package:firebase_course1/features/home/views/cubit/home_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class editCategory extends StatefulWidget {
-  const editCategory({super.key, required this.docid});
+class editCategory extends StatelessWidget {
+  editCategory({super.key, required this.docid, required this.homeCubit});
   final String docid;
+  final HomeCubit homeCubit;
 
-  @override
-  State<editCategory> createState() => _editCategoryState();
-}
-
-class _editCategoryState extends State<editCategory> {
   GlobalKey<FormState> globalKey = GlobalKey<FormState>();
+
   TextEditingController nameController = TextEditingController();
-  CollectionReference categories = FirebaseFirestore.instance.collection(
-    'categories',
-  );
-  editCategory() async {
-    if (globalKey.currentState!.validate()) {
-      try {
-        await categories.doc(widget.docid).update({
-          "name": nameController.text,
-        });
-      } catch (e) {
-        print('Error updating category: $e');
-      }
-    }
-  }
-
-  getCategoryData() async {
-    var doc = await categories.doc(widget.docid).get();
-    nameController.text = doc['name'];
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getCategoryData();
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Edit Category')),
-      body: Form(
-        key: globalKey,
-        child: Column(
-          children: [
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Customaddtextfield(nameController: nameController , name: 'Save',),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                if (globalKey.currentState!.validate()) {
-                  try {
-                    await editCategory();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
+    return BlocListener<HomeCubit, HomeState>(
+      listener: (context, state) {
+        if (state is LoadedHomeState) {
+          Navigator.pop(context);
+        }
+        if (state is ErrorHomeState) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.errorMsg)));
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(title: Text('Edit Category')),
+        body: Form(
+          key: globalKey,
+          child: Column(
+            children: [
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Customaddtextfield(
+                  nameController: nameController,
+                  name: 'Save',
+                ),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  if (globalKey.currentState!.validate()) {
+                    homeCubit.updateCategory(
+                      docId: docid,
+                      newName: nameController.text,
                     );
-                  } catch (e) {
-                    print('Error adding category: $e');
                   }
-                }
-              },
-              child: Text('Save'),
-            ),
-          ],
+                },
+                child: Text('Save'),
+              ),
+            ],
+          ),
         ),
       ),
     );

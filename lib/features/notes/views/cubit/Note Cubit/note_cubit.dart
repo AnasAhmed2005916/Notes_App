@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_course1/features/auth/views/cubit/Note%20Cubit/note_state.dart';
+import 'package:firebase_course1/features/notes/views/cubit/Note%20Cubit/note_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NoteCubit extends Cubit<NoteState> {

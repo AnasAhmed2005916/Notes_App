@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_course1/core/widgets/customaddtextfield.dart';
-import 'package:firebase_course1/home_page.dart';
+import 'package:firebase_course1/features/home/views/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 class AddCategory extends StatefulWidget {

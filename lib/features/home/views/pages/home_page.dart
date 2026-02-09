@@ -6,37 +6,15 @@ import 'package:firebase_course1/core/constants/assets.dart';
 import 'package:firebase_course1/core/routes/app_routes.dart';
 import 'package:firebase_course1/features/auth/views/cubit/Theme%20Cubit/theme_cubit.dart';
 import 'package:firebase_course1/features/auth/views/cubit/Theme%20Cubit/theme_state.dart';
-import 'package:firebase_course1/features/auth/views/cubit/Note%20Cubit/note_cubit.dart';
+import 'package:firebase_course1/features/home/views/cubit/home_cubit.dart';
+import 'package:firebase_course1/features/home/views/cubit/home_state.dart';
+import 'package:firebase_course1/features/notes/views/cubit/Note%20Cubit/note_cubit.dart';
 import 'package:firebase_course1/pages/note_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  List<QueryDocumentSnapshot> data = [];
-  bool isLoading = true;
-
-  getData() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('categories')
-        .where('id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-        .get();
-    data = querySnapshot.docs;
-    isLoading = false;
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,16 +63,22 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(width: 10),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : data.isEmpty
-          ? Center(
-              child: Text(
-                'No Items Added!',
-                style: TextStyle(fontSize: 20, color: Colors.grey[700]),
+      body: BlocConsumer<HomeCubit, HomeState>(
+        listener: (context, state) {
+          if (state is ErrorHomeState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.errorMsg),
+                backgroundColor: Colors.red,
               ),
-            )
-          : Container(
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is LoadingHomeState) {
+            return Center(child: CircularProgressIndicator());
+          } else if (state is LoadedHomeState) {
+            return Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -104,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               child: GridView.builder(
-                itemCount: data.length,
+                itemCount: state.data.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 15,
@@ -112,7 +96,7 @@ class _HomePageState extends State<HomePage> {
                   mainAxisExtent: 180,
                 ),
                 itemBuilder: (context, index) {
-                  final category = data[index];
+                  final category = state.data[index];
                   return InkWell(
                     onLongPress: () {
                       AwesomeDialog(
@@ -124,24 +108,25 @@ class _HomePageState extends State<HomePage> {
                         btnCancelText: 'Remove',
                         btnOkText: 'Update',
                         btnOkOnPress: () {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  editCategory(docid: category.id),
+                              builder: (_) => BlocProvider.value(
+                                value: context.read<HomeCubit>(),
+                                child: editCategory(
+                                  docid: category.id,
+                                  homeCubit: context.read<HomeCubit>(),
+                                ),
+                              ),
                             ),
                           );
                         },
                         btnCancelOnPress: () async {
-                          await FirebaseFirestore.instance
-                              .collection('categories')
-                              .doc(category.id)
-                              .delete();
-                          data.removeAt(index);
-                          setState(() {});
+                          context.read<HomeCubit>().deleteCategory(category.id);
                         },
                       ).show();
                     },
+
                     onTap: () {
                       Navigator.push(
                         context,
@@ -190,7 +175,11 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
               ),
-            ),
+            );
+          }
+          return const SizedBox();
+        },
+      ),
     );
   }
 }
