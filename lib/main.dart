@@ -1,6 +1,5 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_course1/categories/add_category.dart';
 import 'package:firebase_course1/core/routes/app_routes.dart';
 import 'package:firebase_course1/features/auth/views/cubit/Auth%20Cubit/auth_cubit.dart';
 import 'package:firebase_course1/features/auth/views/cubit/Theme%20Cubit/theme_cubit.dart';
@@ -8,6 +7,7 @@ import 'package:firebase_course1/features/auth/views/cubit/Theme%20Cubit/theme_s
 import 'package:firebase_course1/features/auth/views/pages/login.dart';
 import 'package:firebase_course1/features/auth/views/pages/signUp.dart';
 import 'package:firebase_course1/features/home/views/cubit/home_cubit.dart';
+import 'package:firebase_course1/features/home/views/pages/add_category';
 import 'package:firebase_course1/features/home/views/pages/home_page.dart';
 import 'package:firebase_course1/features/notes/views/cubit/Note%20Cubit/note_cubit.dart';
 import 'package:firebase_course1/firebase_options.dart';
@@ -15,10 +15,13 @@ import 'package:firebase_course1/pages/splash_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/adapters.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Hive.initFlutter();
+  await Hive.openBox('userBox');
   runApp(
     DevicePreview(
       enabled: true,

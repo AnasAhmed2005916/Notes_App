@@ -1,7 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_course1/categories/edit.dart';
+import 'package:firebase_course1/features/home/views/pages/add_category';
+import 'package:firebase_course1/features/home/views/pages/edit_category.dart';
 import 'package:firebase_course1/core/constants/assets.dart';
 import 'package:firebase_course1/core/routes/app_routes.dart';
 import 'package:firebase_course1/features/auth/views/cubit/Theme%20Cubit/theme_cubit.dart';
@@ -9,20 +9,37 @@ import 'package:firebase_course1/features/auth/views/cubit/Theme%20Cubit/theme_s
 import 'package:firebase_course1/features/home/views/cubit/home_cubit.dart';
 import 'package:firebase_course1/features/home/views/cubit/home_state.dart';
 import 'package:firebase_course1/features/notes/views/cubit/Note%20Cubit/note_cubit.dart';
-import 'package:firebase_course1/pages/note_page.dart';
+import 'package:firebase_course1/features/notes/views/pages/note_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/adapters.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    int crossAxisCount = width > 1000
+        ? 4
+        : width > 600
+        ? 3
+        : 2;
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.orange,
         onPressed: () {
-          Navigator.of(context).pushReplacementNamed(AppRoutes.addcategory);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlocProvider.value(
+                value: context.read<HomeCubit>(),
+                child: AddCategory(),
+              ),
+            ),
+          );
         },
         child: const Icon(Icons.add, size: 30),
       ),
@@ -36,6 +53,9 @@ class HomePage extends StatelessWidget {
           IconButton(
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
+              var box = Hive.box('userBox');
+              box.put('isLoggedIn', false);
+              box.delete('userId');
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.login,
@@ -76,7 +96,7 @@ class HomePage extends StatelessWidget {
         },
         builder: (context, state) {
           if (state is LoadingHomeState) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (state is LoadedHomeState) {
             return Container(
               padding: const EdgeInsets.all(12),
@@ -89,8 +109,8 @@ class HomePage extends StatelessWidget {
               ),
               child: GridView.builder(
                 itemCount: state.data.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
                   mainAxisSpacing: 15,
                   crossAxisSpacing: 15,
                   mainAxisExtent: 180,
@@ -113,7 +133,7 @@ class HomePage extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (_) => BlocProvider.value(
                                 value: context.read<HomeCubit>(),
-                                child: editCategory(
+                                child: EditCategory(
                                   docid: category.id,
                                   homeCubit: context.read<HomeCubit>(),
                                 ),
@@ -126,7 +146,6 @@ class HomePage extends StatelessWidget {
                         },
                       ).show();
                     },
-
                     onTap: () {
                       Navigator.push(
                         context,

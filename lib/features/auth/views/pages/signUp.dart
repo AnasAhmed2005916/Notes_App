@@ -1,23 +1,24 @@
 import 'package:firebase_course1/core/routes/app_routes.dart';
 import 'package:firebase_course1/core/widgets/custombuttonauth.dart';
 import 'package:firebase_course1/core/widgets/customlogoauth.dart';
-import 'package:firebase_course1/core/widgets/textformfield.dart';
+import 'package:firebase_course1/core/widgets/custom_text_form.dart';
 import 'package:firebase_course1/features/auth/views/cubit/Auth%20Cubit/auth_cubit.dart';
 import 'package:firebase_course1/features/auth/views/cubit/Auth%20Cubit/auth_state.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUp extends StatelessWidget {
   SignUp({super.key});
 
-  TextEditingController username = TextEditingController();
-  TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
-  GlobalKey<FormState> formState = GlobalKey();
+  final TextEditingController username = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
+  final GlobalKey<FormState> formState = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is SuccessAuthState) {
@@ -52,141 +53,149 @@ class SignUp extends StatelessWidget {
           body: Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const CustomLogoAuth(),
-                  const SizedBox(height: 30),
-                  Text(
-                    "Create Account",
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.orange[800],
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: width > 600 ? 450 : double.infinity,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CustomLogoAuth(),
+                    const SizedBox(height: 30),
+                    Text(
+                      "Create Account",
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange[800],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Sign up to continue using the app",
-                    style: TextStyle(color: Colors.grey[700], fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 30),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Sign up to continue using the app",
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 30),
 
-                  // Card for form
-                  Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    elevation: 5,
-                    shadowColor: Colors.orange[100],
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Form(
-                        key: formState,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Username",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      elevation: 5,
+                      shadowColor: Colors.orange[100],
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Form(
+                          key: formState,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Username",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            CustomTextForm(
-                              hinttext: "Enter your username",
-                              mycontroller: username,
-                              validator: (val) {
-                                if (val == "") return "Can't be empty";
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            const Text(
-                              "Email",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            CustomTextForm(
-                              hinttext: "Enter your email",
-                              mycontroller: email,
-                              validator: (val) {
-                                if (val == "") return "Can't be empty";
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            const Text(
-                              "Password",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            CustomTextForm(
-                              hinttext: "Enter your password",
-                              mycontroller: password,
-                              validator: (val) {
-                                if (val == "") return "Can't be empty";
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 25),
-                            SizedBox(
-                              width: double.infinity,
-                              child: CustomButtonAuth(
-                                title: "Sign Up",
-                                onPressed: () {
-                                  if (formState.currentState!.validate()) {
-                                    context.read<AuthCubit>().SignUp(
-                                      email: email.text,
-                                      password: password.text,
-                                      username: username.text,
-                                    );
-                                  }
+                              const SizedBox(height: 8),
+                              CustomTextForm(
+                                obsecure: false,
+                                hinttext: "Enter your username",
+                                mycontroller: username,
+                                validator: (val) {
+                                  if (val == null || val.isEmpty) return "Can't be empty";
+                                  return null;
                                 },
+                              ),
+                              const SizedBox(height: 20),
+                              const Text(
+                                "Email",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              CustomTextForm(
+                                obsecure: false,
+                                hinttext: "Enter your email",
+                                mycontroller: email,
+                                validator: (val) {
+                                  if (val == null || val.isEmpty) return "Can't be empty";
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              const Text(
+                                "Password",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              CustomTextForm(
+                                obsecure: true,
+                                hinttext: "Enter your password",
+                                mycontroller: password,
+                                validator: (val) {
+                                  if (val == null || val.isEmpty) return "Can't be empty";
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 25),
+                              SizedBox(
+                                width: double.infinity,
+                                child: CustomButtonAuth(
+                                  title: "Sign Up",
+                                  onPressed: () {
+                                    if (formState.currentState!.validate()) {
+                                      context.read<AuthCubit>().SignUp(
+                                            email: email.text,
+                                            password: password.text,
+                                            username: username.text,
+                                          );
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+                      },
+                      child: RichText(
+                        text: TextSpan(
+                          style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                          children: const [
+                            TextSpan(text: "Have an account? "),
+                            TextSpan(
+                              text: "Login",
+                              style: TextStyle(
+                                color: Colors.orange,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(
-                        context,
-                      ).pushReplacementNamed(AppRoutes.login);
-                    },
-                    child: RichText(
-                      text: TextSpan(
-                        style: TextStyle(color: Colors.grey[700], fontSize: 16),
-                        children: const [
-                          TextSpan(text: "Have an account? "),
-                          TextSpan(
-                            text: "Login",
-                            style: TextStyle(
-                              color: Colors.orange,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                    if (state is LoadingAuthState)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        child: CircularProgressIndicator(color: Colors.orange),
                       ),
-                    ),
-                  ),
-                  if (state is LoadingAuthState)
-                    const Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: CircularProgressIndicator(color: Colors.orange),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

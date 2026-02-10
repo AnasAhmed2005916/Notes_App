@@ -18,4 +18,23 @@ class NoteCubit extends Cubit<NoteState> {
       emit(ErrorNoteState('Failed to load notes'));
     }
   }
+
+  Future<void> addNote({
+    required String title,
+    required String content,
+    required String categoryId,
+  }) async {
+    try {
+      emit(AddNoteLoading());
+      await FirebaseFirestore.instance.collection('notes').add({
+        'title': title,
+        'content': content,
+        'categoryId': categoryId,
+        'userId': FirebaseAuth.instance.currentUser!.uid,
+      });
+      emit(AddNoteSuccess());
+    } catch (e) {
+      emit(AddNoteError(errorMsg: e.toString()));
+    }
+  }
 }

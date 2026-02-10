@@ -1,0 +1,81 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_course1/core/widgets/customaddtextfield.dart';
+import 'package:firebase_course1/features/home/views/cubit/home_cubit.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class AddCategory extends StatefulWidget {
+  const AddCategory({super.key});
+
+  @override
+  State<AddCategory> createState() => _AddCategoryState();
+}
+
+class _AddCategoryState extends State<AddCategory> {
+  final GlobalKey<FormState> globalKey = GlobalKey<FormState>();
+  final TextEditingController nameController = TextEditingController();
+  final CollectionReference categories =
+      FirebaseFirestore.instance.collection('categories');
+
+  Future<void> addCategory() {
+    return categories
+        .add({
+          'name': nameController.text,
+          "id": FirebaseAuth.instance.currentUser!.uid,
+        })
+        .then((value) => print("Category Added"))
+        .catchError((error) => print("Failed to add category: $error"));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Add Category')),
+      body: Center(
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: width > 600 ? 450 : double.infinity,
+            ),
+            child: Form(
+              key: globalKey,
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Customaddtextfield(
+                      nameController: nameController,
+                      name: 'Add Category : ',
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (globalKey.currentState!.validate()) {
+                        try {
+                          await addCategory();
+                          context.read<HomeCubit>().getData();
+                          Navigator.pop(context);
+                        } catch (e) {
+                          print('Error adding category: $e');
+                        }
+                      }
+                    },
+                    child: const Text('Add'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/** 
+ * * chandanursing@virgilian.com * HlkKM}rgY* * * 6559ivory@virgilian.com * =+p6eR1yu * * sourbonnee@virgilian.com * \d:CdhUDPO * * ahmedqurani@virgilian.com * ahmed1234 */

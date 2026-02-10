@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_course1/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,14 +14,34 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 5), () {
-      if (FirebaseAuth.instance.currentUser != null &&
+
+    Future.delayed(const Duration(seconds: 3), () {
+      var box = Hive.box('userBox');
+      bool isLoggedIn = box.get('isLoggedIn', defaultValue: false);
+
+      if (isLoggedIn &&
+          FirebaseAuth.instance.currentUser != null &&
           FirebaseAuth.instance.currentUser!.emailVerified) {
         Navigator.pushReplacementNamed(context, AppRoutes.home);
       } else {
         Navigator.pushReplacementNamed(context, AppRoutes.login);
       }
     });
+  }
+
+  void checkLoginStatus() async {
+    // افتح الـ box بتاع Hive
+    var box = Hive.box('userBox');
+
+    bool isLoggedIn = box.get('isLoggedIn', defaultValue: false);
+
+    await Future.delayed(const Duration(seconds: 5));
+
+    if (isLoggedIn) {
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
+    } else {
+      Navigator.pushReplacementNamed(context, AppRoutes.login);
+    }
   }
 
   @override
@@ -32,8 +53,8 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset('assets/images/logo.png'),
-            SizedBox(height: 15),
-            Text(
+            const SizedBox(height: 15),
+            const Text(
               'Notes App',
               style: TextStyle(
                 fontSize: 35,
@@ -41,8 +62,8 @@ class _SplashScreenState extends State<SplashScreen> {
                 color: Colors.white,
               ),
             ),
-            SizedBox(height: 10),
-            Text(
+            const SizedBox(height: 10),
+            const Text(
               'Think and Write',
               style: TextStyle(
                 fontSize: 25,

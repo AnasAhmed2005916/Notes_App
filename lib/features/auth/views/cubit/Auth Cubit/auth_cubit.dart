@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_course1/features/auth/views/cubit/Auth%20Cubit/auth_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/adapters.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(InitAuthState());
@@ -18,6 +18,10 @@ class AuthCubit extends Cubit<AuthState> {
           message: 'Please verify your email first',
         );
       }
+
+      var box = Hive.box('userBox');
+      box.put('isLoggedIn', true);
+      box.put('userId', credential.user!.uid);
       emit(SuccessAuthState());
     } on FirebaseAuthException catch (e) {
       emit(FailAuthState(ErrorMsg: e.message ?? 'Login Failed'));
@@ -42,6 +46,4 @@ class AuthCubit extends Cubit<AuthState> {
       emit(FailAuthState(ErrorMsg: e.message ?? 'SignUp Failed'));
     }
   }
-
-  
 }
