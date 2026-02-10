@@ -11,7 +11,7 @@ import 'package:firebase_course1/features/home/views/pages/add_category';
 import 'package:firebase_course1/features/home/views/pages/home_page.dart';
 import 'package:firebase_course1/features/notes/views/cubit/Note%20Cubit/note_cubit.dart';
 import 'package:firebase_course1/firebase_options.dart';
-import 'package:firebase_course1/pages/splash_screen.dart';
+import 'package:firebase_course1/features/auth/views/pages/splash_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
